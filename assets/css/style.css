@@ -174,7 +174,6 @@ body {
 
 .carousel-slide:hover .slide-bg { transform: scale(1.12); }
 
-/* Gradient backgrounds as placeholders for real renders */
 .slide-bg-1 {
   background-image:
     radial-gradient(ellipse at 30% 50%, rgba(205,182,159,0.12) 0%, transparent 60%),
@@ -383,12 +382,19 @@ body {
 }
 
 .service-icon {
-  width: 56px; height: 56px;
+  width: 72px; height: 72px;
   margin-bottom: 24px;
   color: var(--col-base);
-  opacity: 0.8;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: transform var(--transition);
 }
 .service-icon svg { width: 100%; height: 100%; }
+.service-icon i { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.service-card:hover .service-icon { transform: scale(1.04); }
 
 .service-card h3 {
   font-family: var(--font-display);
@@ -454,10 +460,15 @@ body {
 .why-item:nth-child(4) { transition-delay: 0.3s; }
 
 .why-icon {
-  flex-shrink: 0;
-  width: 40px; height: 40px;
+ width: 72px; height: 72px;
+  margin-bottom: 24px;
   color: var(--col-base);
-  margin-top: 2px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: transform var(--transition);
 }
 .why-icon svg { width: 100%; height: 100%; }
 
@@ -524,6 +535,7 @@ body {
 .valor-icon {
   width: 44px; height: 44px;
   margin: 0 auto 20px;
+  font-size: 28px;
   color: var(--col-base);
 }
 .valor-icon svg { width: 100%; height: 100%; }
@@ -598,6 +610,7 @@ body {
   width: 52px; height: 52px;
   color: var(--col-base);
   margin-bottom: 20px;
+  font-size: 28px;
   opacity: 0.8;
 }
 .alcance-icon svg { width: 100%; height: 100%; }
@@ -667,6 +680,7 @@ body {
   width: 36px; height: 36px;
   color: var(--col-base);
   opacity: 0.7;
+  font-size: 28px;
   margin-bottom: 4px;
 }
 .stat-icon svg { width: 100%; height: 100%; }
@@ -722,6 +736,7 @@ body {
   line-height: 1.15;
   margin-bottom: 24px;
   letter-spacing: -0.01em;
+  text-decoration: none;
 }
 .vision-title em {
   font-style: italic;
@@ -773,7 +788,6 @@ body {
   color: var(--col-muted);
 }
 
-/* ===== FOOTER ===== */
 .footer {
   background: var(--col-dark3);
   border-top: 1px solid var(--col-border);
@@ -895,6 +909,7 @@ body {
     gap: 20px;
   }
   .nav-cta { display: none; }
+  .vision-section .nav-cta { display: inline-block; }
   .nav-toggle { display: flex; }
 
   .section { padding: 70px 24px; }
