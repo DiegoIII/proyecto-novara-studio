@@ -28,12 +28,46 @@ filterBtns.forEach(btn => {
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.08 });
-document.querySelectorAll('.cat-card, .tier-header').forEach(el => observer.observe(el));
+document.querySelectorAll('.cat-card, .tier-header, .render-item, .renders-header').forEach(el => observer.observe(el));
+
+function createLightbox() {
+  if (document.getElementById('renderLightbox')) return;
+  const lb = document.createElement('div');
+  lb.id = 'renderLightbox';
+  lb.className = 'render-lightbox';
+  lb.setAttribute('role', 'dialog');
+  lb.setAttribute('aria-modal', 'true');
+  lb.innerHTML = `<div class="rl-backdrop"></div><button class="rl-close" id="rlClose" aria-label="Cerrar"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg></button><figure class="rl-figure"><img id="rlImg" src="" alt=""/><figcaption id="rlCaption" class="rl-caption"></figcaption></figure>`;
+  document.body.appendChild(lb);
+  lb.querySelector('.rl-backdrop').addEventListener('click', closeLightbox);
+  lb.querySelector('#rlClose').addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+}
+function openLightbox(src, caption) {
+  const lb = document.getElementById('renderLightbox');
+  document.getElementById('rlImg').src = src;
+  document.getElementById('rlImg').alt = caption;
+  document.getElementById('rlCaption').textContent = caption;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb = document.getElementById('renderLightbox');
+  if (lb) { lb.classList.remove('open'); document.body.style.overflow = ''; }
+}
+document.querySelectorAll('.render-item').forEach(item => {
+  item.addEventListener('click', () => {
+    createLightbox();
+    const img = item.querySelector('img');
+    const caption = item.querySelector('.render-caption')?.textContent || '';
+    openLightbox(img.src, caption);
+  });
+});
 
 const catalogData = {
   "basico-interior-sala": {
     tier: "Básico", category: "Interior", title: "Sala — Comedor",
-    tagline: "El punto de partida para transformar el corazón de tu hogar.", img: null,
+    tagline: "El punto de partida para transformar el corazón de tu hogar.", img: "img/interior-basico-1.jpeg",
     description: "Diseñamos tu sala y comedor como un conjunto armonioso: paleta de colores, materiales, distribución de muebles y una propuesta visual en 3D para que veas el resultado antes de comprar cualquier cosa.",
     includes: [
       { icon: "render", text: "Propuesta en 3D (1 vista realista)" },
@@ -47,7 +81,7 @@ const catalogData = {
   },
   "basico-interior-recamara": {
     tier: "Básico", category: "Interior", title: "Recámara Principal",
-    tagline: "Tu espacio de descanso, diseñado para inspirarte cada mañana.", img: null,
+    tagline: "Tu espacio de descanso, diseñado para inspirarte cada mañana.", img: "img/interior-basico-2.jpg",
     description: "Optimizamos la distribución de tu recámara, proponemos una paleta coherente y diseñamos la iluminación para lograr el ambiente que buscas, todo documentado en un render claro.",
     includes: [
       { icon: "render", text: "Propuesta en 3D (1 vista)" },
@@ -61,7 +95,7 @@ const catalogData = {
   },
   "basico-exterior-fachada": {
     tier: "Básico", category: "Exterior", title: "Fachada Residencial",
-    tagline: "La primera impresión de tu hogar, renovada con criterio profesional.", img: null,
+    tagline: "La primera impresión de tu hogar, renovada con criterio profesional.", img: "img/exterior-basico-3.jpg",
     description: "Proponemos una nueva imagen para el frente de tu casa: colores, texturas, materiales y elementos decorativos que elevan el aspecto de tu propiedad sin obras mayores.",
     includes: [
       { icon: "render", text: "Render de fachada (1 vista frontal)" },
@@ -75,7 +109,7 @@ const catalogData = {
   },
   "intermedio-interior-sala-cocina": {
     tier: "Intermedio", category: "Interior", title: "Sala — Comedor — Cocina",
-    tagline: "Los tres espacios principales de tu hogar, pensados como uno solo.", img: null,
+    tagline: "Los tres espacios principales de tu hogar, pensados como uno solo.", img: "img/interior-intermedio-1.jpeg",
     description: "Un proyecto integral que unifica sala, comedor y cocina en una propuesta coherente de estilo, materiales e iluminación. Recibes múltiples vistas 3D, lista de materiales con precios y una visita de supervisión.",
     includes: [
       { icon: "render", text: "Propuesta en 3D (3 vistas distintas)" },
@@ -90,7 +124,7 @@ const catalogData = {
   },
   "intermedio-exterior-patio": {
     tier: "Intermedio", category: "Exterior", title: "Patio + Jardín",
-    tagline: "Convierte tu espacio exterior en una extensión real de tu hogar.", img: null,
+    tagline: "Convierte tu espacio exterior en una extensión real de tu hogar.", img: "img/exterior-intermedio-2.jpeg",
     description: "Diseñamos tu patio y jardín con criterio paisajístico y funcional: vegetación, pavimentos, iluminación exterior y zonas de descanso o convivencia adaptadas a tu presupuesto.",
     includes: [
       { icon: "render", text: "Render 3D (2 vistas del espacio)" },
@@ -105,7 +139,7 @@ const catalogData = {
   },
   "intermedio-comercial-local": {
     tier: "Intermedio", category: "Comercial", title: "Local Comercial",
-    tagline: "Un espacio que vende por sí solo antes de que abras la puerta.", img: null,
+    tagline: "Un espacio que vende por sí solo antes de que abras la puerta.", img: "img/comercial-intermedio-3.jpeg",
     description: "Diseñamos la distribución funcional y la identidad visual de tu local: renders 3D, señalética básica y propuesta de imagen que comunica tu marca desde el espacio físico.",
     includes: [
       { icon: "render", text: "Propuesta 3D (2 vistas interior/exterior)" },
@@ -120,7 +154,7 @@ const catalogData = {
   },
   "plus-interior-residencial": {
     tier: "Plus", category: "Interior", title: "Proyecto Residencial Completo",
-    tagline: "Nosotros nos encargamos de todo. Tú solo apruebas el resultado.", img: null,
+    tagline: "Nosotros nos encargamos de todo. Tú solo apruebas el resultado.", img: "img/interior-plus-1.jpg",
     description: "Servicio completo de diseño de interiores: desde el primer render hasta la entrega de tu espacio terminado. Gestionamos materiales, coordinamos proveedores y supervisamos cada etapa de la obra.",
     includes: [
       { icon: "render", text: "3D completo con múltiples vistas y recorrido" },
@@ -135,7 +169,7 @@ const catalogData = {
   },
   "plus-exterior-remodelacion": {
     tier: "Plus", category: "Exterior", title: "Remodelación Exterior Completa",
-    tagline: "Fachada, patio y jardín: una transformación exterior integral.", img: null,
+    tagline: "Fachada, patio y jardín: una transformación exterior integral.", img: "img/exterior-plus-2.jpeg",
     description: "Diseñamos y ejecutamos la renovación completa del exterior de tu propiedad: fachada, patio y jardín como un proyecto unificado, gestionando cada detalle de obra y materiales.",
     includes: [
       { icon: "render", text: "Fachada + patio + jardín en 3D (múltiples vistas)" },
@@ -150,7 +184,7 @@ const catalogData = {
   },
   "plus-comercial-llave": {
     tier: "Plus", category: "Comercial", title: "Negocio Llave en Mano",
-    tagline: "Tu negocio diseñado, construido y listo para abrir.", img: null,
+    tagline: "Tu negocio diseñado, construido y listo para abrir.", img: "img/comercial-plus-3.jpeg",
     description: "El servicio más completo de Novara: diseñamos el interior y exterior de tu negocio, coordinamos toda la obra, gestionamos materiales y te entregamos un espacio funcional, con imagen y listo para operar.",
     includes: [
       { icon: "render", text: "Diseño interior y exterior completo en 3D" },
@@ -210,7 +244,8 @@ function openModal(data) {
   const body = document.getElementById("detalleBody");
   const includesHTML = data.includes.map(item => `<li><span class="di-icon">${getIcon(item.icon)}</span><span>${item.text}</span></li>`).join("");
   const notIncludesHTML = data.notIncludes.length ? `<div class="di-not-includes"><p class="di-sub-label">No incluye</p><ul class="di-not-list">${data.notIncludes.map(t => `<li><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>${t}</li>`).join("")}</ul></div>` : "";
-  body.innerHTML = `<div class="di-top"><div class="di-badges"><span class="di-tier-badge ${getTierClass(data.tier)}">${data.tier}</span><span class="di-cat-badge">${data.category}</span></div><h2 class="di-title">${data.title}</h2><p class="di-tagline">${data.tagline}</p></div><p class="di-description">${data.description}</p><div class="di-section"><p class="di-sub-label">¿Qué incluye?</p><ul class="di-includes-list">${includesHTML}</ul></div>${notIncludesHTML}<div class="di-meta"><div class="di-meta-item"><div class="di-meta-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><line x1="10" y1="10" x2="14" y2="12"/></svg></div><div><span class="di-meta-label">Tiempo de entrega</span><span class="di-meta-value">${data.time}</span></div></div><div class="di-meta-item"><div class="di-meta-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="8" r="4"/><path d="M3 18 C3 13 17 13 17 18"/></svg></div><div><span class="di-meta-label">Ideal para</span><span class="di-meta-value">${data.ideal}</span></div></div></div><div class="di-actions"><a href="${data.cta}" class="di-btn-primary"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="9" x2="15" y2="9"/><polyline points="10 4 15 9 10 14"/></svg>Solicitar este paquete</a><button class="di-btn-secondary" id="diClose2">Cerrar</button></div>`;
+  const heroImgHTML = data.img ? `<div class="di-hero"><img src="${data.img}" alt="${data.title}" class="di-hero-img"/><div class="di-hero-overlay"></div></div>` : "";
+  body.innerHTML = `${heroImgHTML}<div class="di-top"><div class="di-badges"><span class="di-tier-badge ${getTierClass(data.tier)}">${data.tier}</span><span class="di-cat-badge">${data.category}</span></div><h2 class="di-title">${data.title}</h2><p class="di-tagline">${data.tagline}</p></div><p class="di-description">${data.description}</p><div class="di-section"><p class="di-sub-label">¿Qué incluye?</p><ul class="di-includes-list">${includesHTML}</ul></div>${notIncludesHTML}<div class="di-meta"><div class="di-meta-item"><div class="di-meta-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><line x1="10" y1="10" x2="14" y2="12"/></svg></div><div><span class="di-meta-label">Tiempo de entrega</span><span class="di-meta-value">${data.time}</span></div></div><div class="di-meta-item"><div class="di-meta-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="8" r="4"/><path d="M3 18 C3 13 17 13 17 18"/></svg></div><div><span class="di-meta-label">Ideal para</span><span class="di-meta-value">${data.ideal}</span></div></div></div><div class="di-actions"><a href="${data.cta}" class="di-btn-primary"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="9" x2="15" y2="9"/><polyline points="10 4 15 9 10 14"/></svg>Solicitar este paquete</a><button class="di-btn-secondary" id="diClose2">Cerrar</button></div>`;
   document.getElementById("diClose2").addEventListener("click", closeModal);
   modal.classList.add("open");
   document.body.style.overflow = "hidden";
